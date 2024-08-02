@@ -14,7 +14,8 @@ Features:
     4. View Transaction History
     5. Generate Summary Report
 All the features are basic implementation for beginers to understand.
-Records are stored as csv file for convenient not to scare away the beginners with SQL and databases.
+Records are stored as csv file for convenient not to scare away the beginners
+with SQL and databases.
 Feel free to use it, modify it and improve it.
 Thank You'''
 # Define types for better annotation
@@ -35,16 +36,21 @@ def load_transactions() -> Transactions:
 
 def save_transactions(transactions: Transactions) -> None:
     """Save transactions to CSV file."""
-    fieldnames = ['Type', 'Amount', 'Date', 'Category','Date of Expenditure']
+    fieldnames = ['Type', 'Amount', 'Date', 'Category','Date of Expense/Income']
     with open('transactions.csv', 'w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(transactions)
 
-def add_income(amount: float) -> None:
+def add_income(amount: float, category: str, income_date:str) -> None:
     """Add income to transactions with current date."""
     current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    transaction = {'Type': 'Income', 'Amount': amount, 'Date': current_date, 'Category': ''}
+    transaction = {
+                'Type': 'Income', 
+                'Amount': amount, 
+                'Date': current_date, 
+                'Category': category,
+                "Date of Expense/Income": income_date}
     transactions = load_transactions()
     transactions.append(transaction)
     save_transactions(transactions)
@@ -52,23 +58,35 @@ def add_income(amount: float) -> None:
 def record_expenditure(amount: float, category: str, expense_date: str) -> None:
     """Record expenditure to transactions with current date."""
     current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    transaction = {'Type': 'Expenditure', 'Amount': amount, 'Date': current_date, 'Category': category, "Date of Expenditure": expense_date}
+    transaction = {'Type': 'Expenditure', 
+                   'Amount': amount, 
+                   'Date': current_date, 
+                   'Category': category, 
+                   "Date of Expense/Income": expense_date}
     transactions = load_transactions()
     transactions.append(transaction)
     save_transactions(transactions)
 
 def calculate_balance(transactions: Transactions) -> float:
     """Calculate current balance."""
-    total_income = sum(float(transaction['Amount']) for transaction in transactions if transaction['Type'] == 'Income')
-    total_expenditure = sum(float(transaction['Amount']) for transaction in transactions if transaction['Type'] == 'Expenditure')
+    total_income = sum(float(transaction['Amount']) 
+                       for transaction in transactions 
+                       if transaction['Type'] == 'Income')
+    total_expenditure = sum(float(transaction['Amount']) 
+                            for transaction in transactions 
+                            if transaction['Type'] == 'Expenditure')
     return total_income - total_expenditure
 
 def generate_summary_report(transactions: Transactions) -> str:
     """Generate a summary report of income, expenditures, and balance."""
-    total_income = sum(float(transaction['Amount']) for transaction in transactions if transaction['Type'] == 'Income')
-    total_expenditure = sum(float(transaction['Amount']) for transaction in transactions if transaction['Type'] == 'Expenditure')
+    total_income = sum(float(transaction['Amount']) for 
+                       transaction in transactions 
+                       if transaction['Type'] == 'Income')
+    total_expenditure = sum(float(transaction['Amount']) 
+                            for transaction in transactions 
+                            if transaction['Type'] == 'Expenditure')
     
-    summary = f"Summary Report:\n"
+    summary = "Summary Report:\n"
     summary += f"Total Income: Rs. {total_income:.2f}\n"
     summary += f"Total Expenditure: Rs. {total_expenditure:.2f}\n"
     
@@ -108,13 +126,15 @@ def main():
         
         if choice == '1':
             amount = float(input("Enter income amount: "))
-            add_income(amount)
+            category = input("Enter category: ")
+            income_date = input("Enter date of Income (YYYY-MM-DD): ")
+            add_income(amount,category, income_date)
             print("Income added successfully.")
         
         elif choice == '2':
             amount = float(input("Enter expenditure amount: "))
             category = input("Enter category: ")
-            expense_date = input("Enter date of expenditure: ")
+            expense_date = input("Enter date of expenditure (YYYY-MM-DD): ")
             record_expenditure(amount, category, expense_date)
             print("Expenditure recorded successfully.")
         
@@ -127,10 +147,10 @@ def main():
             transactions = load_transactions()
             count=0
             print("Transaction History:")
-            print(f"{'SL.':<6}{'Type':<13}{'Amount':^13}  {'Category':^12}{'Date of Expenditure':^24}{'Entry date':^12}")
+            print(f"{'SL.':<6}{'Type':<13}{'Amount':>13}  {'Category':^12}{'Date of Expense/Income':^24}{'Entry date':^12}")
             for transaction in transactions:
                 count+=1
-                print(f"{count:<6}{transaction['Type']:<13}{transaction['Amount']:>13}  {transaction['Category']:<12}{transaction['Date of Expenditure']:^24}{transaction['Date']:^12}")
+                print(f"{count:<6}{transaction['Type']:<13}{transaction['Amount']:>13}  {transaction['Category']:^12}{transaction['Date of Expense/Income']:^24} {transaction['Date']:^12}")
                 # print(transaction)
         
         elif choice == '5':
