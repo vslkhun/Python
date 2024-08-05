@@ -18,12 +18,31 @@ Records are stored as csv file for convenient not to scare away the beginners
 with SQL and databases.
 Feel free to use it, modify it and improve it.
 Thank You'''
+
 # Define types for better annotation
 Transaction = Dict[str, Union[str, float]]  # Type for a single transaction
 Transactions = List[Transaction]            # Type for list of transactions
 
 def load_transactions() -> Transactions:
-    """Load transactions from CSV file."""
+    """
+   Load transactions from a CSV file and return them as a list of dictionaries.
+
+   Returns:
+       List[Dict[str, Any]]: A list of transaction records, where each record is a dictionary containing
+                             the transaction details. Each dictionary includes fields like 'Type',
+                             'Amount', 'Date', 'Category', and 'Date of Expense/Income'.
+
+   Description:
+       - Opens and reads the CSV file named 'transactions.csv'.
+       - Uses `csv.DictReader` to parse the CSV file into a list of dictionaries.
+       - Each dictionary in the list represents a transaction record.
+       - If the CSV file does not exist, a `FileNotFoundError` is caught, and a message is printed.
+       - Returns an empty list if the file is not found.
+
+   Example:
+       transactions = load_transactions()
+       print(transactions)
+   """
     transactions = []
     try:
         with open('transactions.csv', 'r', newline='') as file:
@@ -35,7 +54,30 @@ def load_transactions() -> Transactions:
     return transactions
 
 def save_transactions(transactions: Transactions) -> None:
-    """Save transactions to CSV file."""
+    """
+    Save a list of transactions to a CSV file.
+
+    Args:
+        transactions (List[Dict[str, Any]]): A list of transaction records where each record is a dictionary 
+                                             containing transaction details. Each dictionary must include 
+                                             the keys 'Type', 'Amount', 'Date', 'Category', and 'Date of Expense/Income'.
+
+    Returns:
+        None: This function does not return a value.
+    
+    Description:
+        - Opens (or creates) a file named 'transactions.csv' in write mode.
+        - Uses the `csv.DictWriter` to write the list of transactions to the file.
+        - The CSV file will include a header row with the columns: 'Type', 'Amount', 'Date', 'Category', and 'Date of Expense/Income'.
+        - Writes each transaction in the list as a row in the CSV file.
+
+    Example:
+        transactions = [
+            {'Type': 'Income', 'Amount': '5000.00', 'Date': '2024-08-05 14:23:00', 'Category': '', 'Date of Expense/Income': '2024-08-05'},
+            {'Type': 'Expenditure', 'Amount': '150.00', 'Date': '2024-08-06 09:15:00', 'Category': 'Food', 'Date of Expense/Income': '2024-08-06'}
+        ]
+        save_transactions(transactions)
+    """
     fieldnames = ['Type', 'Amount', 'Date', 'Category','Date of Expense/Income']
     with open('transactions.csv', 'w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -43,7 +85,31 @@ def save_transactions(transactions: Transactions) -> None:
         writer.writerows(transactions)
 
 def add_income(amount: float, category: str, income_date:str) -> None:
-    """Add income to transactions with current date."""
+    """
+    Add an income transaction with the current date and save it to the transactions list.
+
+    Args:
+        amount (float): The amount of the income.
+        category (str): The category of the income (e.g., 'Salary', 'Investment').
+        income_date (str): The date of the income in 'YYYY-MM-DD' format.
+
+    Returns:
+        None: This function does not return a value.
+
+    Description:
+        - Creates a transaction dictionary with the following fields:
+            - 'Type': Set to 'Income'.
+            - 'Amount': The amount of the income.
+            - 'Date': The current date and time when the income is recorded.
+            - 'Category': The category of the income.
+            - 'Date of Expense/Income': The date when the income occurred, provided by the user.
+        - Loads existing transactions from a persistent store using `load_transactions()`.
+        - Appends the new income transaction to the list of transactions.
+        - Saves the updated list of transactions back to the persistent store using `save_transactions()`.
+
+    Example:
+        add_income(2000.00, 'Salary', '2024-08-05')
+    """
     current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     transaction = {
                 'Type': 'Income', 
@@ -56,7 +122,31 @@ def add_income(amount: float, category: str, income_date:str) -> None:
     save_transactions(transactions)
 
 def record_expenditure(amount: float, category: str, expense_date: str) -> None:
-    """Record expenditure to transactions with current date."""
+    """
+    Record an expenditure transaction with the current date and save it to the transactions list.
+
+    Args:
+        amount (float): The amount of the expenditure.
+        category (str): The category of the expenditure (e.g., 'Food', 'Transport').
+        expense_date (str): The date of the expense in 'YYYY-MM-DD' format.
+
+    Returns:
+        None: This function does not return a value.
+
+    Description:
+        - Creates a transaction dictionary with the following fields:
+            - 'Type': Set to 'Expenditure'.
+            - 'Amount': The amount of the expenditure.
+            - 'Date': The current date and time when the expenditure is recorded.
+            - 'Category': The category of the expenditure.
+            - 'Date of Expense/Income': The date of the expense provided by the user.
+        - Loads existing transactions from a persistent store using `load_transactions()`.
+        - Appends the new expenditure transaction to the list of transactions.
+        - Saves the updated list of transactions back to the persistent store using `save_transactions()`.
+
+    Example:
+        record_expenditure(150.00, 'Food', '2024-08-05')
+    """
     current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     transaction = {'Type': 'Expenditure', 
                    'Amount': amount, 
@@ -68,33 +158,98 @@ def record_expenditure(amount: float, category: str, expense_date: str) -> None:
     save_transactions(transactions)
 
 def calculate_balance(transactions: Transactions) -> float:
-    """Calculate current balance."""
-    total_income = sum(float(transaction['Amount']) 
+    """
+    Calculate the current balance based on a list of transactions.
+
+    Args:
+        transactions (List[Dict[str, Any]]): A list of transaction records where each record is a dictionary 
+                                             containing details of the transaction. Each dictionary must 
+                                             include at least the keys 'Type' and 'Amount'.
+
+    Returns:
+        float: The current balance, calculated as the total income minus the total expenditure.
+    
+    Description:
+        - Computes the total income by summing the amounts of transactions labeled as 'Income'.
+        - Computes the total expenditure by summing the amounts of transactions labeled as 'Expenditure'.
+        - Returns the balance by subtracting the total expenditure from the total income.
+
+    Example:
+        transactions = [
+            {'Type': 'Income', 'Amount': '5000.00'},
+            {'Type': 'Expenditure', 'Amount': '1500.00'},
+            {'Type': 'Expenditure', 'Amount': '200.00'}
+        ]
+        balance = calculate_balance(transactions)
+        print(balance)  # Output: 3300.00
+    """
+    total_income = sum(float(transaction.get('Amount')) 
                        for transaction in transactions 
-                       if transaction['Type'] == 'Income')
-    total_expenditure = sum(float(transaction['Amount']) 
+                       if transaction.get('Type') == 'Income')
+    total_expenditure = sum(float(transaction.get('Amount')) 
                             for transaction in transactions 
-                            if transaction['Type'] == 'Expenditure')
+                            if transaction.get('Type') == 'Expenditure')
     return total_income - total_expenditure
 
 def generate_summary_report(transactions: Transactions) -> str:
-    """Generate a summary report of income, expenditures, and balance."""
-    total_income = sum(float(transaction['Amount']) for 
+    """
+   Generate a summary report of income, expenditures, and balance from a list of transactions.
+
+   Args:
+       transactions (List[Dict[str, Any]]): A list of transaction records where each record is a dictionary 
+                                            containing details of the transaction. Each dictionary must 
+                                            include at least the keys 'Type', 'Amount', and optionally 'Category'.
+
+   Returns:
+       str: A summary report that includes total income, total expenditure, expenditure by category, and 
+            the current balance.
+   
+   Description:
+       - Calculates the total income and total expenditure from the given list of transactions.
+       - Aggregates expenditure by category if categories are provided.
+       - Includes a balance calculation which is assumed to be done by the `calculate_balance` function.
+       - Formats the report as a string with details of total income, total expenditure, expenditure by category, 
+         and the current balance.
+
+   Example:
+       transactions = [
+           {'Type': 'Income', 'Amount': '5000.00'},
+           {'Type': 'Expenditure', 'Amount': '1500.00', 'Category': 'Food'},
+           {'Type': 'Expenditure', 'Amount': '200.00', 'Category': 'Transport'},
+           {'Type': 'Expenditure', 'Amount': '300.00', 'Category': 'Food'}
+       ]
+       print(generate_summary_report(transactions))
+   """
+    total_income = sum(float(transaction.get('Amount')) for 
                        transaction in transactions 
-                       if transaction['Type'] == 'Income')
-    total_expenditure = sum(float(transaction['Amount']) 
+                       if transaction.get('Type') == 'Income')
+    total_expenditure = sum(float(transaction.get('Amount')) 
                             for transaction in transactions 
-                            if transaction['Type'] == 'Expenditure')
+                            if transaction.get('Type') == 'Expenditure')
     
-    summary = "Summary Report:\n"
-    summary += f"Total Income: Rs. {total_income:.2f}\n"
-    summary += f"Total Expenditure: Rs. {total_expenditure:.2f}\n"
+    summary = f"\nTotal Income     : Rs. {total_income:.2f}\n"
+    summary += f"Total Expenditure: Rs. {total_expenditure:.2f}\n\n"
     
     categories = {}
     for transaction in transactions:
-        if transaction['Type'] == 'Expenditure':
-            category = transaction['Category']
-            amount = float(transaction['Amount'])
+        if transaction.get('Type') == 'Income':
+            category = transaction.get('Category')
+            amount = float(transaction.get('Amount'))
+            if category in categories:
+                categories[category] += amount
+            else:
+                categories[category] = amount
+    
+    if categories:
+        summary += "Income by Category:\n"
+        for category, amount in categories.items():
+            summary += f"  {category}: Rs. {amount:.2f}\n"
+    summary += '\n'
+    categories = {}
+    for transaction in transactions:
+        if transaction.get('Type') == 'Expenditure':
+            category = transaction.get('Category')
+            amount = float(transaction.get('Amount'))
             if category in categories:
                 categories[category] += amount
             else:
@@ -103,57 +258,116 @@ def generate_summary_report(transactions: Transactions) -> str:
     if categories:
         summary += "Expenditure by Category:\n"
         for category, amount in categories.items():
-            summary += f"{category}: Rs. {amount:.2f}\n"
-    
+            summary += f"  {category}: Rs. {amount:.2f}\n"
+    summary += '\n'
     balance = calculate_balance(transactions)
-    summary += f"Current Balance: Rs. {balance:.2f}\n"
+    summary += f"\nCurrent Balance: Rs. {balance:.2f}\n"
     
     
     return summary
 
+
+def validate_date(date_str:str)->bool:
+    """
+    Validate if the given date string is in the format YYYY-MM-DD and if it is on or before today's date.
+    
+    Args:
+    date_str (str): The date string to be validated.
+    
+    Returns:
+    bool: True if the date is valid and on or before today, False otherwise.
+    """
+    try:
+        # Parse the input date string into a datetime object
+        income_date = datetime.strptime(date_str, "%Y-%m-%d")
+        
+        # Get today's date
+        today = datetime.now()
+        
+        # Compare the income date to today's date
+        if income_date <= today:
+            return True
+        else:
+            return False
+    
+    except ValueError:
+        # Return False if the date format is incorrect
+        return False
+
+# # Example usage
+# while True:
+#     income_date_str = input("Enter date of Income (YYYY-MM-DD): ")
+#     if validate_date(income_date_str):
+#         print("The date is valid and on or before today.")
+#         break
+#     else:
+#         print("Invalid date. Please enter a date in YYYY-MM-DD format on or before today.")
+
 def main():
     """Main function to run the command-line interface."""
     while True:
-        print("\n===== Income and Expenditure Management System =====")
-        print("1. Add Income")
-        print("2. Record Expenditure")
-        print("3. View Balance")
-        print("4. View Transaction History")
-        print("5. Generate Summary Report")
-        print("6. Exit")
+        print("\n\n===== Income and Expenditure Management System =====")
+        print("  1. Add Income")
+        print("  2. Record Expenditure")
+        print("  3. View Balance")
+        print("  4. View Transaction History")
+        print("  5. Generate Summary Report")
+        print("  6. Exit")
         
-        choice = input("Enter your choice (1-6): ")
+        choice = input(" Enter your choice (1-6): ")
         
         if choice == '1':
-            amount = float(input("Enter income amount: "))
-            category = input("Enter category: ")
+            print("\n\n===== Add Income =====\n")
+            # amount = float(input("Enter income amount: "))
+            while True:
+                try:
+                    amount = float(input("Enter income amount: "))
+                    break  # If conversion is successful, exit the loop
+                except ValueError:
+                    print("Invalid input. Please enter a numeric value.")
+            category = input("Enter category: ").capitalize()
             income_date = input("Enter date of Income (YYYY-MM-DD): ")
+            while not validate_date(income_date):
+                print("Invalid date. Please enter a date in YYYY-MM-DD format on or before today.")
+                income_date = input("Enter date of Income (YYYY-MM-DD): ")
             add_income(amount,category, income_date)
             print("Income added successfully.")
         
         elif choice == '2':
-            amount = float(input("Enter expenditure amount: "))
-            category = input("Enter category: ")
+            print("\n\n===== Record Expenditure =====\n")
+            # amount = float(input("Enter expenditure amount: "))
+            while True:
+                try:
+                    amount = float(input("Enter expenditure amount: "))
+                    break  # If conversion is successful, exit the loop
+                except ValueError:
+                    print("Invalid input. Please enter a numeric value.")
+            category = input("Enter category: ").capitalize()
             expense_date = input("Enter date of expenditure (YYYY-MM-DD): ")
+            while not validate_date(expense_date):
+                print("Invalid date. Please enter a date in YYYY-MM-DD format on or before today.")
+                expense_date = input("Enter date of expenditure (YYYY-MM-DD): ")
             record_expenditure(amount, category, expense_date)
             print("Expenditure recorded successfully.")
         
         elif choice == '3':
+            print("\n\n===== View Balance =====\n")
             transactions = load_transactions()
             balance = calculate_balance(transactions)
             print(f"Current Balance: Rs. {balance:.2f}")
         
         elif choice == '4':
+            print("\n\n===== Transaction History =====\n")
             transactions = load_transactions()
             count=0
-            print("Transaction History:")
             print(f"{'SL.':<6}{'Type':<13}{'Amount':>13}  {'Category':^12}{'Date of Expense/Income':^24}{'Entry date':^12}")
+            
             for transaction in transactions:
                 count+=1
-                print(f"{count:<6}{transaction['Type']:<13}{transaction['Amount']:>13}  {transaction['Category']:^12}{transaction['Date of Expense/Income']:^24} {transaction['Date']:^12}")
-                # print(transaction)
+                print(f"{count:<6}{transaction.get('Type'):<13}{float(transaction.get('Amount')):>13.2f}  {transaction.get('Category'):^12}{transaction.get('Date of Expense/Income'):^24} {transaction.get('Date'):^12}")
         
         elif choice == '5':
+            print("\n\n===== Summary Report =====\n")
             transactions = load_transactions()
             summary = generate_summary_report(transactions)
             print(summary)
