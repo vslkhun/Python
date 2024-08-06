@@ -321,7 +321,7 @@ def main():
         
         if choice == '1':
             print(f'\n\n{"-"*52}\n')
-            print(f"{'===== Add Income =====':^52}")
+            print(f"{'Add Income':^52}")
             print(f'{"-"*52}')
             # amount = float(input("Enter income amount: "))
             while True:
@@ -340,7 +340,7 @@ def main():
         
         elif choice == '2':
             print(f'\n\n{"-"*52}\n')
-            print(f"{'===== Record Expenditure =====':52}")
+            print(f"{'Record Expenditure':52}")
             print(f'{"-"*52}')
             # amount = float(input("Enter expenditure amount: "))
             while True:
@@ -359,7 +359,7 @@ def main():
             print(f'{"-"*52}\n')
         elif choice == '3':
             print(f'\n\n{"-"*52}')
-            print(f"{'===== View Balance =====':^52}")
+            print(f"{'View Balance':^52}")
             print(f'{"-"*52}')
             transactions = load_transactions()
             balance = calculate_balance(transactions)
@@ -367,7 +367,7 @@ def main():
             print(f'{"-"*52}\n')
         elif choice == '4':
             print(f'\n\n{"-"*87}')
-            print(f"{'===== Transaction History =====':^87}")
+            print(f"{'Transaction History':^87}")
             print(f'{"-"*87}')
             transactions = load_transactions()
             count=0
@@ -379,7 +379,7 @@ def main():
             print(f'{"-"*87}\n')
         elif choice == '5':
             print(f'\n\n{"-"*52}')
-            print(f"{'===== Summary Report =====':^52}")
+            print(f"{'Summary Report':^52}")
             print(f'{"-"*52}')
             transactions = load_transactions()
             summary = generate_summary_report(transactions)
