@@ -306,18 +306,23 @@ def validate_date(date_str:str)->bool:
 def main():
     """Main function to run the command-line interface."""
     while True:
-        print("\n\n===== Income and Expenditure Management System =====")
+        print(f'\n\n{"-"*52}')
+        print("===== Income and Expenditure Management System =====")
+        print(f'{"-"*52}')
         print("  1. Add Income")
         print("  2. Record Expenditure")
         print("  3. View Balance")
         print("  4. View Transaction History")
         print("  5. Generate Summary Report")
         print("  6. Exit")
+        print(f'{"-"*52}\n')
         
         choice = input(" Enter your choice (1-6): ")
         
         if choice == '1':
-            print("\n\n===== Add Income =====\n")
+            print(f'\n\n{"-"*52}\n')
+            print(f"{'===== Add Income =====':^52}")
+            print(f'{"-"*52}')
             # amount = float(input("Enter income amount: "))
             while True:
                 try:
@@ -334,7 +339,9 @@ def main():
             print("Income added successfully.")
         
         elif choice == '2':
-            print("\n\n===== Record Expenditure =====\n")
+            print(f'\n\n{"-"*52}\n')
+            print(f"{'===== Record Expenditure =====':52}")
+            print(f'{"-"*52}')
             # amount = float(input("Enter expenditure amount: "))
             while True:
                 try:
@@ -349,15 +356,19 @@ def main():
                 expense_date = input("Enter date of expenditure (YYYY-MM-DD): ")
             record_expenditure(amount, category, expense_date)
             print("Expenditure recorded successfully.")
-        
+            print(f'{"-"*52}\n')
         elif choice == '3':
-            print("\n\n===== View Balance =====\n")
+            print(f'\n\n{"-"*52}')
+            print(f"{'===== View Balance =====':^52}")
+            print(f'{"-"*52}')
             transactions = load_transactions()
             balance = calculate_balance(transactions)
             print(f"Current Balance: Rs. {balance:.2f}")
-        
+            print(f'{"-"*52}\n')
         elif choice == '4':
-            print("\n\n===== Transaction History =====\n")
+            print(f'\n\n{"-"*87}')
+            print(f"{'===== Transaction History =====':^87}")
+            print(f'{"-"*87}')
             transactions = load_transactions()
             count=0
             print(f"{'SL.':<6}{'Type':<13}{'Amount':>13}  {'Category':^12}{'Date of Expense/Income':^24}{'Entry date':^12}")
@@ -365,15 +376,18 @@ def main():
             for transaction in transactions:
                 count+=1
                 print(f"{count:<6}{transaction.get('Type'):<13}{float(transaction.get('Amount')):>13.2f}  {transaction.get('Category'):^12}{transaction.get('Date of Expense/Income'):^24} {transaction.get('Date'):^12}")
-        
+            print(f'{"-"*87}\n')
         elif choice == '5':
-            print("\n\n===== Summary Report =====\n")
+            print(f'\n\n{"-"*52}')
+            print(f"{'===== Summary Report =====':^52}")
+            print(f'{"-"*52}')
             transactions = load_transactions()
             summary = generate_summary_report(transactions)
             print(summary)
-        
+            print(f'{"-"*52}\n')
         elif choice == '6':
             print("Exiting program. Thank you!")
+            print(f'{"-"*52}\n')
             break
         
         else:
