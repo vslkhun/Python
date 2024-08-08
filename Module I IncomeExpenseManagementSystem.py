@@ -50,10 +50,10 @@ def load_transactions() -> Transactions:
             for row in reader:
                 transactions.append(row)
     except FileNotFoundError:
-        print("No transactions found.")
+        print("",end='')
     return transactions
 
-def save_transactions(transactions: Transactions) -> None:
+def save_transactions(transactions: Transactions) -> bool:
     """
     Save a list of transactions to a CSV file.
 
@@ -63,7 +63,7 @@ def save_transactions(transactions: Transactions) -> None:
                                              the keys 'Type', 'Amount', 'Date', 'Category', and 'Date of Expense/Income'.
 
     Returns:
-        None: This function does not return a value.
+        bool: This function returns True if saving is successful otherwise False.
     
     Description:
         - Opens (or creates) a file named 'transactions.csv' in write mode.
@@ -79,12 +79,15 @@ def save_transactions(transactions: Transactions) -> None:
         save_transactions(transactions)
     """
     fieldnames = ['Type', 'Amount', 'Date', 'Category','Date of Expense/Income']
-    with open('transactions.csv', 'w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(transactions)
-
-def add_income(amount: float, category: str, income_date:str) -> None:
+    try:
+        with open('transactions.csv', 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(transactions)
+    except:
+        return False
+    return True
+def add_income(amount: float, category: str, income_date:str) -> bool:
     """
     Add an income transaction with the current date and save it to the transactions list.
 
@@ -94,7 +97,7 @@ def add_income(amount: float, category: str, income_date:str) -> None:
         income_date (str): The date of the income in 'YYYY-MM-DD' format.
 
     Returns:
-        None: This function does not return a value.
+        bool: This function returns True if successfully added otherwise False.
 
     Description:
         - Creates a transaction dictionary with the following fields:
@@ -120,8 +123,9 @@ def add_income(amount: float, category: str, income_date:str) -> None:
     transactions = load_transactions()
     transactions.append(transaction)
     save_transactions(transactions)
+    return True
 
-def record_expenditure(amount: float, category: str, expense_date: str) -> None:
+def record_expenditure(amount: float, category: str, expense_date: str) -> bool:
     """
     Record an expenditure transaction with the current date and save it to the transactions list.
 
@@ -131,7 +135,7 @@ def record_expenditure(amount: float, category: str, expense_date: str) -> None:
         expense_date (str): The date of the expense in 'YYYY-MM-DD' format.
 
     Returns:
-        None: This function does not return a value.
+        bool: This function returns True if expenditure is succssfully recorded.
 
     Description:
         - Creates a transaction dictionary with the following fields:
@@ -156,7 +160,7 @@ def record_expenditure(amount: float, category: str, expense_date: str) -> None:
     transactions = load_transactions()
     transactions.append(transaction)
     save_transactions(transactions)
-
+    return True
 def calculate_balance(transactions: Transactions) -> float:
     """
     Calculate the current balance based on a list of transactions.
@@ -227,8 +231,8 @@ def generate_summary_report(transactions: Transactions) -> str:
                             for transaction in transactions 
                             if transaction.get('Type') == 'Expenditure')
     
-    summary = f"\nTotal Income     : Rs. {total_income:.2f}\n"
-    summary += f"Total Expenditure: Rs. {total_expenditure:.2f}\n\n"
+    summary = f"\n  Total Income        : Rs. {total_income:>12.2f}\n"
+    summary += f"  Total Expenditure   : Rs. {total_expenditure:>12.2f}\n\n"
     
     categories = {}
     for transaction in transactions:
@@ -243,7 +247,7 @@ def generate_summary_report(transactions: Transactions) -> str:
     if categories:
         summary += "Income by Category:\n"
         for category, amount in categories.items():
-            summary += f"  {category}: Rs. {amount:.2f}\n"
+            summary += f"  {category:<20}: Rs. {amount:>12.2f}\n"
     summary += '\n'
     categories = {}
     for transaction in transactions:
@@ -258,10 +262,10 @@ def generate_summary_report(transactions: Transactions) -> str:
     if categories:
         summary += "Expenditure by Category:\n"
         for category, amount in categories.items():
-            summary += f"  {category}: Rs. {amount:.2f}\n"
+            summary += f"  {category:<20}: Rs. {amount:>12.2f}\n"
     summary += '\n'
     balance = calculate_balance(transactions)
-    summary += f"\nCurrent Balance: Rs. {balance:.2f}\n"
+    summary += f"\nCurrent Balance: Rs. {balance:>.2f}\n"
     
     
     return summary
@@ -294,15 +298,6 @@ def validate_date(date_str:str)->bool:
         # Return False if the date format is incorrect
         return False
 
-# # Example usage
-# while True:
-#     income_date_str = input("Enter date of Income (YYYY-MM-DD): ")
-#     if validate_date(income_date_str):
-#         print("The date is valid and on or before today.")
-#         break
-#     else:
-#         print("Invalid date. Please enter a date in YYYY-MM-DD format on or before today.")
-
 def main():
     """Main function to run the command-line interface."""
     while True:
@@ -323,71 +318,83 @@ def main():
             print(f'\n\n{"-"*52}\n')
             print(f"{'Add Income':^52}")
             print(f'{"-"*52}')
-            # amount = float(input("Enter income amount: "))
             while True:
                 try:
-                    amount = float(input("Enter income amount: "))
+                    amount = float(input("  Enter income amount              : "))
                     break  # If conversion is successful, exit the loop
                 except ValueError:
-                    print("Invalid input. Please enter a numeric value.")
-            category = input("Enter category: ").capitalize()
-            income_date = input("Enter date of Income (YYYY-MM-DD): ")
+                    print("  Invalid input. Please enter a numeric value.")
+            category = input("  Enter category                   : ").capitalize()
+            income_date = input("  Enter date of Income (YYYY-MM-DD): ")
             while not validate_date(income_date):
-                print("Invalid date. Please enter a date in YYYY-MM-DD format on or before today.")
-                income_date = input("Enter date of Income (YYYY-MM-DD): ")
-            add_income(amount,category, income_date)
-            print("Income added successfully.")
-        
+                print("  Invalid date. Please enter a date in YYYY-MM-DD format on or before today.")
+                income_date = input("  Enter date of Income (YYYY-MM-DD): ")
+            if add_income(amount,category, income_date):
+                print("  Income added successfully.")
+            else:
+                print("  Something went wrong. Try again")
+            print(f'{"-"*52}\n')
         elif choice == '2':
             print(f'\n\n{"-"*52}\n')
             print(f"{'Record Expenditure':52}")
             print(f'{"-"*52}')
-            # amount = float(input("Enter expenditure amount: "))
             while True:
                 try:
-                    amount = float(input("Enter expenditure amount: "))
+                    amount = float(input("  Enter expenditure amount              : "))
                     break  # If conversion is successful, exit the loop
                 except ValueError:
-                    print("Invalid input. Please enter a numeric value.")
-            category = input("Enter category: ").capitalize()
-            expense_date = input("Enter date of expenditure (YYYY-MM-DD): ")
+                    print("  Invalid input. Please enter a numeric value.")
+            category = input("  Enter category                        : ").capitalize()
+            expense_date = input("  Enter date of expenditure (YYYY-MM-DD): ")
             while not validate_date(expense_date):
-                print("Invalid date. Please enter a date in YYYY-MM-DD format on or before today.")
+                print("  Invalid date. Please enter a date in YYYY-MM-DD format on or before today.")
                 expense_date = input("Enter date of expenditure (YYYY-MM-DD): ")
-            record_expenditure(amount, category, expense_date)
-            print("Expenditure recorded successfully.")
+            if record_expenditure(amount, category, expense_date):
+                print("  Expenditure recorded successfully.")
+            else:
+                print("  Something went wrong. Try again")
             print(f'{"-"*52}\n')
         elif choice == '3':
             print(f'\n\n{"-"*52}')
             print(f"{'View Balance':^52}")
             print(f'{"-"*52}')
             transactions = load_transactions()
-            balance = calculate_balance(transactions)
-            print(f"Current Balance: Rs. {balance:.2f}")
+            if transactions:
+                balance = calculate_balance(transactions)
+                print(f"  Current Balance: Rs. {balance:.2f}")
+            else:
+                print(' No transaction found.')
             print(f'{"-"*52}\n')
         elif choice == '4':
             print(f'\n\n{"-"*87}')
             print(f"{'Transaction History':^87}")
             print(f'{"-"*87}')
             transactions = load_transactions()
-            count=0
-            print(f"{'SL.':<6}{'Type':<13}{'Amount':>13}  {'Category':^12}{'Date of Expense/Income':^24}{'Entry date':^12}")
-            
-            for transaction in transactions:
-                count+=1
-                print(f"{count:<6}{transaction.get('Type'):<13}{float(transaction.get('Amount')):>13.2f}  {transaction.get('Category'):^12}{transaction.get('Date of Expense/Income'):^24} {transaction.get('Date'):^12}")
+            if transactions:
+                count=0
+                print(f"{'SL.':<6}{'Type':<13}{'Amount':>13}  {'Category':^12}{'Date of Expense/Income':^24}{'Entry date':^12}")
+                
+                for transaction in transactions:
+                    count+=1
+                    print(f"{count:<6}{transaction.get('Type'):<13}{float(transaction.get('Amount')):>13.2f}  {transaction.get('Category'):^12}{transaction.get('Date of Expense/Income'):^24} {transaction.get('Date'):^12}")
+            else:
+                print(' No transaction found.')
             print(f'{"-"*87}\n')
         elif choice == '5':
             print(f'\n\n{"-"*52}')
             print(f"{'Summary Report':^52}")
             print(f'{"-"*52}')
             transactions = load_transactions()
-            summary = generate_summary_report(transactions)
-            print(summary)
+            if transactions:
+                summary = generate_summary_report(transactions)
+                print(summary)
+            else:
+                print(' No transaction found.')
             print(f'{"-"*52}\n')
         elif choice == '6':
+            print(f'\n\n{"-"*52}\n')
             print("Exiting program. Thank you!")
-            print(f'{"-"*52}\n')
+            print(f'{"-"*52}\n\n')
             break
         
         else:
