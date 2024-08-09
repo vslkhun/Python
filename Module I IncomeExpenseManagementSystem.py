@@ -210,14 +210,14 @@ def generate_summary_report(transactions: Transactions) -> str:
    
    Description:
        - Calculates the total income and total expenditure from the given list of transactions.
-       - Aggregates expenditure by category if categories are provided.
+       - Aggregates income and expenditure by category if categories are provided.
        - Includes a balance calculation which is assumed to be done by the `calculate_balance` function.
        - Formats the report as a string with details of total income, total expenditure, expenditure by category, 
          and the current balance.
 
    Example:
        transactions = [
-           {'Type': 'Income', 'Amount': '5000.00'},
+           {'Type': 'Income', 'Amount': '5000.00', 'Category': 'Salary'},
            {'Type': 'Expenditure', 'Amount': '1500.00', 'Category': 'Food'},
            {'Type': 'Expenditure', 'Amount': '200.00', 'Category': 'Transport'},
            {'Type': 'Expenditure', 'Amount': '300.00', 'Category': 'Food'}
