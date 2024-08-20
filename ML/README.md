@@ -14,7 +14,7 @@ In this repository, you'll find:
 
 1. **Clone the Repository:**
    ```bash
-   git clone git@github.com:vslkhun/Python.git
+   git clone https://github.com/vslkhun/Python.git
 
    
 
