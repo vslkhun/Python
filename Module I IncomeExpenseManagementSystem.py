@@ -2,7 +2,7 @@
 import csv #For saving csv files
 from datetime import datetime #To get current times
 from typing import List, Dict, Union # For type annotation
-
+import sys, os
 '''This mini Project is to teach my students 
 how to apply python programming to day to day problem solving. 
 It is simple enough to follow and learn the basics of python programming.
@@ -22,7 +22,14 @@ Thank You'''
 # Define types for better annotation
 Transaction = Dict[str, Union[str, float]]  # Type for a single transaction
 Transactions = List[Transaction]            # Type for list of transactions
-
+def clear_terminal()->None:
+    """
+    Function clear terminal
+    """
+    if sys.platform.startswith('win'):
+        os.system('cls')
+    else:
+        os.system('clear')
 def load_transactions() -> Transactions:
     """
    Load transactions from a CSV file and return them as a list of dictionaries.
@@ -315,6 +322,7 @@ def main():
         choice = input(" Enter your choice (1-6): ")
         
         if choice == '1':
+            clear_terminal()
             print(f'\n\n{"-"*52}\n')
             print(f"{'Add Income':^52}")
             print(f'{"-"*52}')
@@ -335,6 +343,7 @@ def main():
                 print("  Something went wrong. Try again")
             print(f'{"-"*52}\n')
         elif choice == '2':
+            clear_terminal()
             print(f'\n\n{"-"*52}\n')
             print(f"{'Record Expenditure':52}")
             print(f'{"-"*52}')
@@ -355,6 +364,7 @@ def main():
                 print("  Something went wrong. Try again")
             print(f'{"-"*52}\n')
         elif choice == '3':
+            clear_terminal()
             print(f'\n\n{"-"*52}')
             print(f"{'View Balance':^52}")
             print(f'{"-"*52}')
@@ -366,6 +376,7 @@ def main():
                 print(' No transaction found.')
             print(f'{"-"*52}\n')
         elif choice == '4':
+            clear_terminal()
             print(f'\n\n{"-"*87}')
             print(f"{'Transaction History':^87}")
             print(f'{"-"*87}')
@@ -381,6 +392,7 @@ def main():
                 print(' No transaction found.')
             print(f'{"-"*87}\n')
         elif choice == '5':
+            clear_terminal()
             print(f'\n\n{"-"*52}')
             print(f"{'Summary Report':^52}")
             print(f'{"-"*52}')
@@ -392,12 +404,14 @@ def main():
                 print(' No transaction found.')
             print(f'{"-"*52}\n')
         elif choice == '6':
+            clear_terminal()
             print(f'\n\n{"-"*52}\n')
             print("Exiting program. Thank you!")
             print(f'{"-"*52}\n\n')
             break
         
         else:
+            clear_terminal()
             print("Invalid choice. Please enter a number from 1 to 6.")
 
 if __name__ == "__main__":
