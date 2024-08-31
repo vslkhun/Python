@@ -34,3 +34,7 @@ def generate_name(length:int)->str:
 # main function
 def main()->None:
     #get user input and call generate_name
+
+if __name__ == "__main__":
+
+    main()
