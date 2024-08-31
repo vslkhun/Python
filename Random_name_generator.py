@@ -1,11 +1,11 @@
 import random
 
 # Define vowels and consonants
-vowels = "aeiou"
-consonants = "bcdfghjklmnpqrstvwxyz"
+vowels:str = "aeiou"
+consonants:str = "bcdfghjklmnpqrstvwxyz"
 
 # Define syllable patterns
-syllable_patterns = [
+syllable_patterns:list[str] = [
     "V",      # Vowel
     "C",      # Consonant
     "VC",     # Vowel + Consonant
@@ -34,6 +34,8 @@ def generate_name(length:int)->str:
 # main function
 def main()->None:
     #get user input and call generate_name
+    
+    """Your code here"""
 
 if __name__ == "__main__":
 
