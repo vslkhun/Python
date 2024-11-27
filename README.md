@@ -11,6 +11,7 @@ This repository includes:
 - **Machine Learning:** Introductory materials, tutorials, and code examples demonstrating various ML algorithms and techniques.
 - **Datasets:** Sample datasets for hands-on practice and experimentation with ML models.
 - **Mini Projects:** Includes mini projects to start with.
+- **mlProjectCreater:** An app that helps to create the project structure.
 
 ## Getting Started
 
